@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\SqlJoiner.DataAccess\SqlJoiner.DataAccess.csproj" />
+    <ProjectReference Include="..\DataAccess\SqlJoiner.Repository\SqlJoiner.Repository.csproj" />
   </ItemGroup>
 
   <ItemGroup>
