@@ -10,4 +10,9 @@
     <PackageReference Include="Dapper" Version="2.1.35" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Interfaces\SqlJoiner.Interfaces\SqlJoiner.Interfaces.csproj" />
+    <ProjectReference Include="..\SqlJoiner.DataAccess\SqlJoiner.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>
