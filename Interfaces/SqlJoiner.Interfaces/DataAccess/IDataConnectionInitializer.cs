@@ -8,8 +8,8 @@ namespace SqlJoiner.Interfaces.DataAccess
 {
     public interface IDataConnectionInitializer
     {
-        Task InitializeConnectionAsync();
-        Task OpenConnectionAsync();
+        void InitializeConnectionAsync();
+        void OpenConnectionAsync();
         void CloseConnection();
     }
 }

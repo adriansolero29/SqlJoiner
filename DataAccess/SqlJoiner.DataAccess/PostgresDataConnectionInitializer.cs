@@ -12,27 +12,23 @@ namespace SqlJoiner.DataAccess
             Connection.DbConnection?.Dispose();
         }
 
-        public async Task InitializeConnectionAsync()
+        public void InitializeConnectionAsync()
         {
-            await Task.Run(() =>
-            {
-                NpgsqlConnectionStringBuilder cnStringBuilder = new NpgsqlConnectionStringBuilder(Connection.ConnectionString);
+            NpgsqlConnectionStringBuilder cnStringBuilder = new NpgsqlConnectionStringBuilder(Connection.ConnectionString);
 
-                if (Connection.DbConnection == null)
-                    Connection.DbConnection = new NpgsqlConnection(cnStringBuilder.ConnectionString);
-            });
+            if (Connection.DbConnection == null)
+                Connection.DbConnection = new NpgsqlConnection(cnStringBuilder.ConnectionString);
         }
 
-        public async Task OpenConnectionAsync()
+        public void OpenConnectionAsync()
         {
-            await Task.Run(() =>
-            {
-                if (Connection.DbConnection == null)
-                    throw new ArgumentNullException("DbConnection is null");
+            if (Connection.DbConnection == null)
+                throw new ArgumentNullException("DbConnection is null");
 
-                if (Connection.DbConnection.State != System.Data.ConnectionState.Open)
-                    Connection.DbConnection.Open();
-            });
+            if (Connection.DbConnection.State != System.Data.ConnectionState.Open)
+            {
+                Connection.DbConnection.Open();
+            }
         }
     }
 }
