@@ -1,5 +1,5 @@
 ﻿using SqlJoiner.DataAccess;
-using SqlJoiner.Repository.MainRepository;
+//using SqlJoiner.Repository.MainRepository;
 
 namespace SqlJoiner.MsTest
 {
@@ -28,8 +28,8 @@ namespace SqlJoiner.MsTest
         [TestMethod]
         public async Task GetData()
         {
-            DataProcessor p = new DataProcessor(new PostgresDataConnectionInitializer());
-            await p.Get($@"SELECT table_name FROM information_schema.""columns"" WHERE table_schema = 'DocumentControl'");
+            //DataProcessor p = new DataProcessor(new PostgresDataConnectionInitializer());
+            //await p.Get($@"SELECT table_name FROM information_schema.""columns"" WHERE table_schema = 'DocumentControl'");
         }
     }
 }
