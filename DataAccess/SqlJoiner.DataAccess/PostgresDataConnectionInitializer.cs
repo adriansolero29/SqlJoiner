@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SqlJoiner.DataAccess
 {
-    public class PostgresDataConnectionInitializer : IDataConnectionInitializer
+    public sealed class PostgresDataConnectionInitializer : IDataConnectionInitializer
     {
         public void CloseConnection()
         {
