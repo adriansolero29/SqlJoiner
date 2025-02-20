@@ -3,6 +3,12 @@ using System.Data;
 
 namespace SqlJoiner.DataAccess
 {
+    public enum ConnectionEnum
+    {
+        POSTGRESQL,
+        SQLSERVER
+    }
+
     public static class Connection
     {
         public static IDbConnection? DbConnection { get; set; }
