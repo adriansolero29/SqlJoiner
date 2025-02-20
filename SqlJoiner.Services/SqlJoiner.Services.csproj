@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\SqlJoiner.Repository\SqlJoiner.Repository.csproj" />
+    <ProjectReference Include="..\Interfaces\SqlJoiner.Interfaces\SqlJoiner.Interfaces.csproj" />
+    <ProjectReference Include="..\MVP\SqlJoiner.Models\SqlJoiner.Models.csproj" />
+  </ItemGroup>
+
 </Project>
