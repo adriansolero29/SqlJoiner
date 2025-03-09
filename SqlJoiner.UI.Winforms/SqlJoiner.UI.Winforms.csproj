@@ -8,4 +8,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Interfaces\SqlJoiner.Interfaces\SqlJoiner.Interfaces.csproj" />
+    <ProjectReference Include="..\MVP\SqlJoiner.Presenter\SqlJoiner.Presenter.csproj" />
+    <ProjectReference Include="..\SqlJoiner.Services\SqlJoiner.Services.csproj" />
+  </ItemGroup>
+
 </Project>

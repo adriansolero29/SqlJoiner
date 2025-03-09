@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Interfaces\SqlJoiner.Interfaces\SqlJoiner.Interfaces.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -2,6 +2,7 @@
 
 namespace SqlJoiner.Models
 {
+	[Serializable]
     public class ColumnOL : IModel
     {
 		private TableOL? _table;

@@ -2,6 +2,7 @@
 
 namespace SqlJoiner.Models
 {
+	[Serializable]
     public class SchemaOL : IModel
     {
 		private string? _catalogName;

@@ -2,6 +2,7 @@
 
 namespace SqlJoiner.Models
 {
+	[Serializable]
     public class TableOL : IModel
     {
 		private SchemaOL? _schema;
