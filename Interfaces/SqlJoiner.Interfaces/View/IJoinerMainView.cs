@@ -4,6 +4,7 @@ namespace SqlJoiner.Interfaces.View
 {
     public interface IJoinerMainView
     {
+        List<CustomDatabaseEntityModelOL> FullDatabaseEntityModel { get; set; }
         List<SchemaOL>? SchemaList { get; set; }
         List<TableOL>? TableList { get; set; }
 
