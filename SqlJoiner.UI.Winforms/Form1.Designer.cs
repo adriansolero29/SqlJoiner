@@ -28,46 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            cmbSchemaList = new ComboBox();
-            lbSchema = new ListBox();
+            treeData = new TreeView();
             button2 = new Button();
             SuspendLayout();
             // 
-            // cmbSchemaList
+            // treeData
             // 
-            cmbSchemaList.FormattingEnabled = true;
-            cmbSchemaList.Location = new Point(12, 12);
-            cmbSchemaList.Name = "cmbSchemaList";
-            cmbSchemaList.Size = new Size(204, 23);
-            cmbSchemaList.TabIndex = 0;
-            // 
-            // lbSchema
-            // 
-            lbSchema.FormattingEnabled = true;
-            lbSchema.Location = new Point(12, 41);
-            lbSchema.Name = "lbSchema";
-            lbSchema.Size = new Size(204, 109);
-            lbSchema.TabIndex = 1;
+            treeData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            treeData.CheckBoxes = true;
+            treeData.FullRowSelect = true;
+            treeData.Location = new Point(12, 41);
+            treeData.Name = "treeData";
+            treeData.Size = new Size(427, 377);
+            treeData.TabIndex = 4;
             // 
             // button2
             // 
-            button2.Location = new Point(12, 156);
+            button2.Location = new Point(12, 12);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
-            button2.TabIndex = 2;
-            button2.Text = "button2";
+            button2.TabIndex = 5;
+            button2.Text = "reload";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click_1;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(228, 267);
+            ClientSize = new Size(451, 430);
             Controls.Add(button2);
-            Controls.Add(lbSchema);
-            Controls.Add(cmbSchemaList);
+            Controls.Add(treeData);
             Name = "Form1";
-            Text = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
             Load += Form1_Load;
             ResumeLayout(false);
         }
@@ -75,8 +68,7 @@
         #endregion
 
         private Button button1;
-        private ComboBox cmbSchemaList;
-        private ListBox lbSchema;
+        private TreeView treeData;
         private Button button2;
     }
 }
