@@ -14,20 +14,32 @@ namespace SqlJoiner.DataAccess
 
         public void InitializeConnectionAsync()
         {
-            NpgsqlConnectionStringBuilder cnStringBuilder = new NpgsqlConnectionStringBuilder(Connection.ConnectionString);
-
-            if (Connection.DbConnection == null)
+            try
+            {
+                NpgsqlConnectionStringBuilder cnStringBuilder = new NpgsqlConnectionStringBuilder(Connection.ConnectionString);
                 Connection.DbConnection = new NpgsqlConnection(cnStringBuilder.ConnectionString);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public void OpenConnectionAsync()
         {
-            if (Connection.DbConnection == null)
-                throw new ArgumentNullException("DbConnection is null");
-
-            if (Connection.DbConnection.State != System.Data.ConnectionState.Open)
+            try
             {
-                Connection.DbConnection.Open();
+                if (Connection.DbConnection == null)
+                    throw new ArgumentNullException("DbConnection is null");
+
+                if (Connection.DbConnection.State != System.Data.ConnectionState.Open)
+                {
+                    Connection.DbConnection.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

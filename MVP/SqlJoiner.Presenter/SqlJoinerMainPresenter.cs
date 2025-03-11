@@ -14,12 +14,14 @@ namespace SqlJoiner.Presenter
         private readonly IJoinerMainView joinerMainView;
         private readonly ISchemaService schemaService;
         private readonly ITableService tableService;
+        private readonly IColumnService columnService;
 
-        public SqlJoinerMainPresenter(IJoinerMainView joinerMainView, ISchemaService schemaService, ITableService tableService)
+        public SqlJoinerMainPresenter(IJoinerMainView joinerMainView, ISchemaService schemaService, ITableService tableService, IColumnService columnService)
         {
             this.joinerMainView = joinerMainView ?? throw new ArgumentNullException(nameof(joinerMainView));
             this.schemaService = schemaService ?? throw new ArgumentNullException(nameof(schemaService));
             this.tableService = tableService ?? throw new ArgumentNullException(nameof(tableService));
+            this.columnService = columnService ?? throw new ArgumentNullException(nameof(columnService));
 
             joinerMainView.Init += JoinerMainView_Init;
             joinerMainView.GenerateSql += JoinerMainView_GenerateSql;
@@ -37,8 +39,43 @@ namespace SqlJoiner.Presenter
         }
 
         private async void JoinerMainView_Init(object? sender, EventArgs e)
-        { 
-            await loadSchemaList();
+        {
+            await loadFullDatabaseInformation();
+        }
+
+        private async Task loadFullDatabaseInformation()
+        {
+            var output = new List<CustomDatabaseEntityModelOL>();
+
+            var schemaList = await schemaService.GetAll();
+            foreach (var schema in schemaList)
+            {
+                var tableList = await tableService.GetBySchema(schema);
+                var list = new List<CustomDataTableEntityOL>();
+                foreach (var table in tableList)
+                {
+                    var column = await columnService.GetByTable(table);
+                    list.Add(new CustomDataTableEntityOL
+                    {
+                        TableInformation = table,
+                        ColumnList = (List<ColumnOL>)column
+                    });
+                }
+
+                output.Add(new CustomDatabaseEntityModelOL
+                {
+                    SchemaInfo = schema,
+                    RecurseTableInformation = list
+                });
+
+                Console.WriteLine("Details loaded for " + schema.SchemaName);
+            }
+
+            Console.WriteLine("Finished");
+
+            joinerMainView.FullDatabaseEntityModel = new List<CustomDatabaseEntityModelOL>();
+            joinerMainView?.FullDatabaseEntityModel?.Clear();
+            joinerMainView?.FullDatabaseEntityModel?.AddRange(output);
         }
 
         private async Task loadTablesBySchema()

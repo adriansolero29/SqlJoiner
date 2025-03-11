@@ -3,8 +3,10 @@ using SqlJoiner.DataAccess;
 using SqlJoiner.Interfaces.DataAccess;
 using SqlJoiner.Interfaces.Repository;
 using SqlJoiner.Interfaces.Service;
+using SqlJoiner.Repository.Column;
 using SqlJoiner.Repository.Schema;
 using SqlJoiner.Repository.Table;
+using SqlJoiner.Services.ColumnService;
 using SqlJoiner.Services.SchemaService;
 using SqlJoiner.Services.TableService;
 
@@ -30,6 +32,8 @@ namespace SqlJoiner.UI.Winforms
             builder.RegisterType<SchemaService>().As<ISchemaService>();
             builder.RegisterType<TableRepository>().As<ITableRepository>();
             builder.RegisterType<TableService>().As<ITableService>();
+            builder.RegisterType<ColumnRepository>().As<IColumnRepository>();
+            builder.RegisterType<ColumnService>().As<IColumnService>();
 
             builder.RegisterType<Form1>().AsSelf();
 
