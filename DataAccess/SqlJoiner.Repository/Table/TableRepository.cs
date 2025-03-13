@@ -64,12 +64,12 @@ WHERE is_insertable_into = 'YES' AND table_type = 'BASE TABLE' {condition}
 ";
 
                 dataConnectionInitializer.InitializeConnectionAsync();
-                dataConnectionInitializer.OpenConnectionAsync();
-
                 if (Connection.DbConnection != null)
                 {
                     using (Connection.DbConnection)
                     {
+                        Connection.DbConnection.Open();
+
                         var result = await Connection.DbConnection.QueryAsync<TableOL, SchemaOL, TableOL>(query, (table, schema) =>
                         {
                             table.Schema = schema;

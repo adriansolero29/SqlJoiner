@@ -25,12 +25,12 @@ SELECT
 FROM information_schema.schemata";
 
                 dataConnectionInitializer.InitializeConnectionAsync();
-                dataConnectionInitializer.OpenConnectionAsync();
-
                 if (Connection.DbConnection != null)
                 {
                     using (Connection.DbConnection)
                     {
+                        Connection.DbConnection.Open();
+
                         var result = await Connection.DbConnection.QueryAsync<SchemaOL>(query);
                         output = result.ToList();
                     }
@@ -58,12 +58,13 @@ FROM information_schema.schemata
                 if (string.IsNullOrEmpty(condition)) throw new ArgumentNullException("condition is empty or null");
 
                 dataConnectionInitializer.InitializeConnectionAsync();
-                dataConnectionInitializer.OpenConnectionAsync();
 
                 if (Connection.DbConnection != null)
                 {
                     using (Connection.DbConnection)
                     {
+                        Connection.DbConnection.Open();
+
                         var result = await Connection.DbConnection.QueryAsync<SchemaOL>(query);
                         output = result.ToList();
                     }
