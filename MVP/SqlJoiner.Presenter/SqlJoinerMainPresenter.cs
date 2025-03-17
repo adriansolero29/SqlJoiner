@@ -26,6 +26,12 @@ namespace SqlJoiner.Presenter
             joinerMainView.Init += JoinerMainView_Init;
             joinerMainView.GenerateSql += JoinerMainView_GenerateSql;
             joinerMainView.SelectedSchemaValueChanged += JoinerMainView_SelectedSchemaValueChanged;
+            joinerMainView.SelectedTableChanged += JoinerMainView_SelectedTableChanged;
+        }
+
+        private async void JoinerMainView_SelectedTableChanged(object? sender, EventArgs e)
+        {
+            await loadColumnsByTable();
         }
 
         private async void JoinerMainView_SelectedSchemaValueChanged(object? sender, EventArgs e)
@@ -97,6 +103,15 @@ namespace SqlJoiner.Presenter
             joinerMainView.SchemaList = new List<SchemaOL>();
             joinerMainView?.SchemaList?.Clear();
             joinerMainView?.SchemaList?.AddRange(result);
+        }
+
+        public async Task loadColumnsByTable()
+        {
+            var result = await columnService.GetByTable(joinerMainView?.SelectedTable ?? new TableOL());
+
+            joinerMainView.ColumnList = new List<ColumnOL>();
+            joinerMainView.ColumnList?.Clear();
+            joinerMainView.ColumnList?.AddRange(result);
         }
     }
 }
