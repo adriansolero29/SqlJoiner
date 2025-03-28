@@ -10,5 +10,6 @@ namespace SqlJoiner.Interfaces.Service
     public interface ITableService
     {
         Task<IEnumerable<TableOL>> GetBySchema(SchemaOL schema);
+        Task<IEnumerable<TableOL>> CheckColumnIfTable(ColumnOL col);
     }
 }

@@ -17,6 +17,11 @@ namespace SqlJoiner.Services.TableService
             this.tableRepository = tableRepository;
         }
 
+        public async Task<IEnumerable<TableOL>> CheckColumnIfTable(ColumnOL col)
+        {
+            return await tableRepository.CheckIfForeignKey(col);
+        }
+
         public async Task<IEnumerable<TableOL>> GetBySchema(SchemaOL schema)
         {
             string condition = $@"AND table_schema = '{schema.SchemaName}'";
