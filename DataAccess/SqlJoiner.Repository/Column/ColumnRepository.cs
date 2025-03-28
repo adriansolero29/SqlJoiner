@@ -44,7 +44,7 @@ WHERE is_updatable = 'YES' {condition}
                     {
                         dataConnectionInitializer.OpenConnectionAsync();
 
-                        var result = await Connection.DbConnection.QueryAsync<ColumnOL, TableOL, SchemaOL, ColumnOL>(query, (column, table, schema) =>
+                        var result = await Connection.DbConnection.QueryAsync<ColumnOL, SchemaOL, TableOL, ColumnOL>(query, (column, schema, table) =>
                         {
                             column.Table = table;
                             column.Table.Schema = schema;

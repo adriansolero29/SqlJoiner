@@ -20,7 +20,7 @@ namespace SqlJoiner.Services.ColumnService
 
         public async Task<IEnumerable<ColumnOL>> GetByTable(TableOL table)
         {
-            string condition = $@" AND table_schema = '{table.Schema?.SchemaName}' AND table_name = '{table.Name}'";
+            string condition = $@" AND table_name = '{table.Name}'";
             return await columnRepository.GetByConditionAsync(condition);
         }
     }
