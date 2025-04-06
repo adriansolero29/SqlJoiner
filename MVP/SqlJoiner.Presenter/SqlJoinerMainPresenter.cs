@@ -2,6 +2,7 @@
 using SqlJoiner.Interfaces.View;
 using SqlJoiner.Models;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace SqlJoiner.Presenter
         private readonly ISchemaService schemaService;
         private readonly ITableService tableService;
         private readonly IColumnService columnService;
-
+        
         public SqlJoinerMainPresenter(IJoinerMainView joinerMainView, ISchemaService schemaService, ITableService tableService, IColumnService columnService)
         {
             this.joinerMainView = joinerMainView ?? throw new ArgumentNullException(nameof(joinerMainView));
@@ -27,69 +28,25 @@ namespace SqlJoiner.Presenter
             joinerMainView.GenerateSql += JoinerMainView_GenerateSql;
             joinerMainView.SelectedSchemaValueChanged += JoinerMainView_SelectedSchemaValueChanged;
             joinerMainView.SelectedTableChanged += JoinerMainView_SelectedTableChanged;
+            joinerMainView.SelectedColumnChanged += JoinerMainView_SelectedColumnChanged;
+            joinerMainView.ColumnSelection += JoinerMainView_ColumnSelection;
+            joinerMainView.ColumnRemoveSelection += JoinerMainView_ColumnRemoveSelection;
+            joinerMainView.TableSelection += JoinerMainView_TableSelection;
+            joinerMainView.TableRemoveSelection += JoinerMainView_TableRemoveSelection;
+
         }
 
-        private async void JoinerMainView_SelectedTableChanged(object? sender, EventArgs e)
+        #region Private Methods
+
+        public async Task<bool> checkIfColumnIsForeignKeyTable(ColumnOL obj)
         {
-            await loadColumnsByTable();
-        }
-
-        private async void JoinerMainView_SelectedSchemaValueChanged(object? sender, EventArgs e)
-        {
-            await loadTablesBySchema();
-        }
-
-        private void JoinerMainView_GenerateSql(object? sender, EventArgs e)
-        {
-            var a = joinerMainView.SelectedSchema;
-        }
-
-        private async void JoinerMainView_Init(object? sender, EventArgs e)
-        {
-            await loadFullDatabaseInformation();
-        }
-
-        private async Task loadFullDatabaseInformation()
-        {
-            var output = new List<CustomDatabaseEntityModelOL>();
-
-            var schemaList = await schemaService.GetAll();
-            foreach (var schema in schemaList)
-            {
-                var tableList = await tableService.GetBySchema(schema);
-                var list = new List<CustomDataTableEntityOL>();
-                foreach (var table in tableList)
-                {
-                    var column = await columnService.GetByTable(table);
-                    list.Add(new CustomDataTableEntityOL
-                    {
-                        TableInformation = table,
-                        ColumnList = (List<ColumnOL>)column
-                    });
-                }
-
-                output.Add(new CustomDatabaseEntityModelOL
-                {
-                    SchemaInfo = schema,
-                    RecurseTableInformation = list
-                });
-
-                Console.WriteLine("Details loaded for " + schema.SchemaName);
-            }
-
-            Console.WriteLine("Finished");
-
-            joinerMainView.FullDatabaseEntityModel = new List<CustomDatabaseEntityModelOL>();
-            joinerMainView?.FullDatabaseEntityModel?.Clear();
-            joinerMainView?.FullDatabaseEntityModel?.AddRange(output);
+            var result = await tableService.CheckColumnIfTable(obj);
+            return result.Count() > 0 ? true : false;
         }
 
         private async Task loadTablesBySchema()
         {
-            if (joinerMainView.SelectedSchema == null)
-                return;
-
-            var result = await tableService.GetBySchema(joinerMainView.SelectedSchema);
+            var result = await tableService.GetBySchema(joinerMainView.SelectedSchema ?? new SchemaOL());
 
             joinerMainView.TableList = new List<TableOL>();
             joinerMainView.TableList?.Clear();
@@ -107,11 +64,86 @@ namespace SqlJoiner.Presenter
 
         public async Task loadColumnsByTable()
         {
-            var result = await columnService.GetByTable(joinerMainView?.SelectedTable ?? new TableOL());
+            var result = await columnService.GetByTable(joinerMainView.SelectedTable ?? new TableOL());
 
             joinerMainView.ColumnList = new List<ColumnOL>();
             joinerMainView.ColumnList?.Clear();
             joinerMainView.ColumnList?.AddRange(result);
+        }
+
+        private void generateQuery()
+        {
+            if (joinerMainView.SelectedTables?.Count > 0)
+            {
+                joinerMainView.SqlJoinedResult = "";
+                foreach (var item in joinerMainView.SelectedTables)
+                {
+                    joinerMainView.SqlJoinedResult += $"""
+
+                        SELECT
+
+                        FROM "{item.Schema?.SchemaName}"."{item.Name}"
+                        ;
+
+                        """;
+                }
+            }
+        }
+
+        #endregion
+
+        private void JoinerMainView_TableRemoveSelection(object? sender, TableOL e)
+        {
+            joinerMainView.SelectedTables?.Remove(e);
+            generateQuery();
+        }
+
+        private void JoinerMainView_TableSelection(object? sender, TableOL e)
+        {
+            joinerMainView.SelectedTables?.Add(e);
+            generateQuery();
+        }
+
+        private void JoinerMainView_ColumnRemoveSelection(object? sender, ColumnOL e)
+        {
+            joinerMainView.SelectedColumns?.Remove(e);
+            generateQuery();
+        }
+
+        private void JoinerMainView_ColumnSelection(object? sender, ColumnOL e)
+        {
+            joinerMainView.SelectedColumns?.Add(e);
+            generateQuery();
+        }
+
+        private async void JoinerMainView_SelectedColumnChanged(object? sender, EventArgs e)
+        {
+            var result = await tableService.CheckColumnIfTable(joinerMainView.SelectedColumn ?? new ColumnOL());
+            joinerMainView.ColumnFromForeignKeyColumn = (List<ColumnOL>?)await columnService.GetByTable(result.FirstOrDefault() ?? new TableOL());
+        }
+
+        private async void JoinerMainView_SelectedTableChanged(object? sender, EventArgs e)
+        {
+            joinerMainView.SelectedTables?.Remove(joinerMainView.SelectedTable ?? new TableOL());
+            joinerMainView.SelectedTables?.Add(joinerMainView.SelectedTable ?? new TableOL());
+            await loadColumnsByTable();
+
+            generateQuery();
+        }
+
+        private async void JoinerMainView_SelectedSchemaValueChanged(object? sender, EventArgs e)
+        {
+            await loadTablesBySchema();
+        }
+
+        private void JoinerMainView_GenerateSql(object? sender, EventArgs e)
+        {
+            var a = joinerMainView.SelectedSchema;
+        }
+
+        private async void JoinerMainView_Init(object? sender, EventArgs e)
+        {
+            await loadSchemaList();
         }
     }
 }
