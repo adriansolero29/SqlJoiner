@@ -5,6 +5,7 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace SqlJoiner.Presenter
         private readonly ISchemaService schemaService;
         private readonly ITableService tableService;
         private readonly IColumnService columnService;
-        
+
         public SqlJoinerMainPresenter(IJoinerMainView joinerMainView, ISchemaService schemaService, ITableService tableService, IColumnService columnService)
         {
             this.joinerMainView = joinerMainView ?? throw new ArgumentNullException(nameof(joinerMainView));
@@ -75,18 +76,28 @@ namespace SqlJoiner.Presenter
         {
             if (joinerMainView.SelectedTables?.Count > 0)
             {
+                string forColumn = "";
+                string tableJoining = "";
+
                 joinerMainView.SqlJoinedResult = "";
                 foreach (var item in joinerMainView.SelectedTables)
                 {
-                    joinerMainView.SqlJoinedResult += $"""
+                    forColumn = "";
+                    foreach (var columns in joinerMainView.SelectedColumns?.Where(x => x.Table?.Name == item.Name).DistinctBy(x => x.ColumnName) ?? new List<ColumnOL>())
+                    {
+                        forColumn += $@"""{columns.ColumnName}"", ";
+                    }
 
-                        SELECT
+                    tableJoining += $@"""{item.Schema?.SchemaName}"".""{item?.Name}""";
+                }
 
-                        FROM "{item.Schema?.SchemaName}"."{item.Name}"
-                        ;
+                joinerMainView.SqlJoinedResult = $"""
+
+                        SELECT 
+                        {forColumn}
+                        FROM {tableJoining};
 
                         """;
-                }
             }
         }
 
@@ -101,7 +112,7 @@ namespace SqlJoiner.Presenter
         private void JoinerMainView_TableSelection(object? sender, TableOL e)
         {
             joinerMainView.SelectedTables?.Add(e);
-            generateQuery();
+            //generateQuery();
         }
 
         private void JoinerMainView_ColumnRemoveSelection(object? sender, ColumnOL e)
@@ -127,8 +138,6 @@ namespace SqlJoiner.Presenter
             joinerMainView.SelectedTables?.Remove(joinerMainView.SelectedTable ?? new TableOL());
             joinerMainView.SelectedTables?.Add(joinerMainView.SelectedTable ?? new TableOL());
             await loadColumnsByTable();
-
-            generateQuery();
         }
 
         private async void JoinerMainView_SelectedSchemaValueChanged(object? sender, EventArgs e)
