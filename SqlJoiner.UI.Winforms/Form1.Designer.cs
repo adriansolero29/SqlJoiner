@@ -28,19 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            treeData = new TreeView();
             button2 = new Button();
+            treeData = new TreeView();
+            txtSql = new RichTextBox();
             SuspendLayout();
-            // 
-            // treeData
-            // 
-            treeData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            treeData.CheckBoxes = true;
-            treeData.FullRowSelect = true;
-            treeData.Location = new Point(12, 41);
-            treeData.Name = "treeData";
-            treeData.Size = new Size(427, 377);
-            treeData.TabIndex = 4;
             // 
             // button2
             // 
@@ -52,15 +43,46 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click_1;
             // 
+            // treeData
+            // 
+            treeData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            treeData.CheckBoxes = true;
+            treeData.FullRowSelect = true;
+            treeData.HideSelection = false;
+            treeData.Location = new Point(12, 41);
+            treeData.Name = "treeData";
+            treeData.ShowNodeToolTips = true;
+            treeData.Size = new Size(249, 480);
+            treeData.TabIndex = 6;
+            treeData.BeforeCheck += treeData_BeforeCheck;
+            treeData.AfterCheck += treeData_AfterCheck;
+            treeData.BeforeCollapse += treeData_BeforeCollapse;
+            treeData.AfterCollapse += treeData_AfterCollapse;
+            treeData.BeforeExpand += treeData_BeforeExpand;
+            treeData.AfterExpand += treeData_AfterExpand;
+            treeData.NodeMouseClick += treeData_NodeMouseClick;
+            // 
+            // txtSql
+            // 
+            txtSql.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtSql.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSql.Location = new Point(267, 41);
+            txtSql.Name = "txtSql";
+            txtSql.Size = new Size(280, 480);
+            txtSql.TabIndex = 7;
+            txtSql.Text = "";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(451, 430);
-            Controls.Add(button2);
+            ClientSize = new Size(559, 533);
+            Controls.Add(txtSql);
             Controls.Add(treeData);
+            Controls.Add(button2);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
+            WindowState = FormWindowState.Maximized;
             Load += Form1_Load;
             ResumeLayout(false);
         }
@@ -68,7 +90,8 @@
         #endregion
 
         private Button button1;
-        private TreeView treeData;
         private Button button2;
+        private TreeView treeData;
+        private RichTextBox txtSql;
     }
 }
