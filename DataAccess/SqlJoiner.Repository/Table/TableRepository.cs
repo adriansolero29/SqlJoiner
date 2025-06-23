@@ -13,13 +13,6 @@ namespace SqlJoiner.Repository.Table
 {
     public class TableRepository : ITableRepository
     {
-        private readonly IDataConnectionInitializer dataConnectionInitializer;
-
-        public TableRepository(IDataConnectionInitializer dataConnectionInitializer)
-        {
-            this.dataConnectionInitializer = dataConnectionInitializer;
-        }
-
         public async Task<IEnumerable<TableOL>> CheckIfForeignKey(ColumnOL col)
         {
             try
@@ -46,23 +39,17 @@ WHERE tc.constraint_type = 'FOREIGN KEY'
     AND tc.table_name = '{col.Table?.Name}';
 ";
 
-                dataConnectionInitializer.InitializeConnectionAsync();
-                dataConnectionInitializer.OpenConnectionAsync();
-
                 if (Connection.DbConnection != null)
                 {
-                    using (Connection.DbConnection)
+                    var result = await Connection.DbConnection.QueryAsync(query);
+                    if (result != null && result.Count() > 0)
                     {
-                        var result = await Connection.DbConnection.QueryAsync(query);
-                        if (result != null)
-                        {
-                            var foreignSchema = result?.FirstOrDefault()?.foreign_table_schema;
-                            var foreignTable = result?.FirstOrDefault()?.foreign_table_name;
+                        var foreignSchema = result?.FirstOrDefault()?.foreign_table_schema;
+                        var foreignTable = result?.FirstOrDefault()?.foreign_table_name;
 
-                            var table = await GetByConditionAsync($"AND c.schema_name = '{foreignSchema}' AND t.table_name = '{foreignTable}'");
+                        var table = await GetByConditionAsync($"AND c.schema_name = '{foreignSchema}' AND t.table_name = '{foreignTable}'");
 
-                            output = table.ToList();
-                        }
+                        output = table.ToList();
                     }
                 }
 
@@ -88,21 +75,15 @@ JOIN information_schema.schemata c ON c.schema_name = t.table_schema
 WHERE t.table_type = 'BASE TABLE'
 ";
 
-                dataConnectionInitializer.InitializeConnectionAsync();
-                dataConnectionInitializer.OpenConnectionAsync();
-
                 if (Connection.DbConnection != null)
                 {
-                    using (Connection.DbConnection)
+                    var result = await Connection.DbConnection.QueryAsync<TableOL, SchemaOL, TableOL>(query, (table, schema) =>
                     {
-                        var result = await Connection.DbConnection.QueryAsync<TableOL, SchemaOL, TableOL>(query, (table, schema) =>
-                        {
-                            table.Schema = schema;
+                        table.Schema = schema;
 
-                            return table;
-                        },splitOn: "schema_name");
-                        output = result.ToList();
-                    }
+                        return table;
+                    }, splitOn: "SchemaName");
+                    output = result.ToList();
                 }
 
                 return output;
@@ -127,21 +108,15 @@ JOIN information_schema.schemata c ON c.schema_name = t.table_schema
 WHERE is_insertable_into = 'YES' AND table_type = 'BASE TABLE' {condition}
 ";
 
-                dataConnectionInitializer.InitializeConnectionAsync();
                 if (Connection.DbConnection != null)
                 {
-                    using (Connection.DbConnection)
+                    var result = await Connection.DbConnection.QueryAsync<TableOL, SchemaOL, TableOL>(query, (table, schema) =>
                     {
-                        Connection.DbConnection.Open();
+                        table.Schema = schema;
 
-                        var result = await Connection.DbConnection.QueryAsync<TableOL, SchemaOL, TableOL>(query, (table, schema) =>
-                        {
-                            table.Schema = schema;
-
-                            return table;
-                        }, splitOn: "SchemaName");
-                        output = result.ToList();
-                    }
+                        return table;
+                    }, splitOn: "SchemaName");
+                    output = result.ToList();
                 }
 
                 return output;

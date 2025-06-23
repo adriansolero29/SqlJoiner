@@ -8,8 +8,11 @@ namespace SqlJoiner.DataAccess
     {
         public void CloseConnection()
         {
-            Connection.DbConnection?.Close();
-            Connection.DbConnection?.Dispose();
+            if (Connection.DbConnection?.State != System.Data.ConnectionState.Connecting)
+            {
+                Connection.DbConnection?.Close();
+                Connection.DbConnection?.Dispose();
+            }
         }
 
         public void InitializeConnectionAsync()
@@ -32,10 +35,8 @@ namespace SqlJoiner.DataAccess
                 if (Connection.DbConnection == null)
                     throw new ArgumentNullException("DbConnection is null");
 
-                if (Connection.DbConnection.State != System.Data.ConnectionState.Open)
-                {
+                if (Connection.DbConnection.State == System.Data.ConnectionState.Closed)
                     Connection.DbConnection.Open();
-                }
             }
             catch (Exception ex)
             {

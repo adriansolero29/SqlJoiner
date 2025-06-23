@@ -9,5 +9,6 @@ namespace SqlJoiner.Interfaces.Repository
 {
     public interface IColumnRepository : IDatabaseDataRepository<ColumnOL>
     {
+        Task<IEnumerable<ColumnOL>> GetAllForeignKeys();
     }
 }

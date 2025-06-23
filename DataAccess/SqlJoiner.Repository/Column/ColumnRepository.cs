@@ -13,16 +13,51 @@ namespace SqlJoiner.Repository.Column
 {
     public class ColumnRepository : IColumnRepository
     {
-        private readonly IDataConnectionInitializer dataConnectionInitializer;
-
-        public ColumnRepository(IDataConnectionInitializer dataConnectionInitializer)
+        public async Task<IEnumerable<ColumnOL>> GetAllAsync()
         {
-            this.dataConnectionInitializer = dataConnectionInitializer;
+            return await Task.Run(() =>
+            {
+                return new List<ColumnOL>();
+            });
         }
 
-        public Task<IEnumerable<ColumnOL>> GetAllAsync()
+        public async Task<IEnumerable<ColumnOL>> GetAllForeignKeys()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var output = new List<ColumnOL>();
+                string query = $@"
+SELECT 
+	kcu.""column_name"" ""ColumnName"", ccu.""table_name"" ""Name"", ccu.""table_schema"" ""SchemaName""
+FROM information_schema.table_constraints tc
+left JOIN information_schema.key_column_usage kcu 
+	ON tc.""constraint_name"" = kcu.""constraint_name""
+	AND tc.table_schema = kcu.table_schema
+	AND tc.""table_name"" = kcu.""table_name""
+left JOIN information_schema.constraint_column_usage ccu
+	ON ccu.""constraint_name"" = kcu.""constraint_name""
+
+WHERE tc.""constraint_type"" = 'FOREIGN KEY'
+";
+
+                if (Connection.DbConnection != null)
+                {
+                    var result = await Connection.DbConnection.QueryAsync<ColumnOL, TableOL, SchemaOL, ColumnOL>(query, (column, table, schema) =>
+                    {
+                        column.Table = table;
+                        column.Table.Schema = schema;
+
+                        return column;
+                    }, splitOn: "Name,SchemaName");
+                    output = result.ToList();
+                }
+
+                return output;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<IEnumerable<ColumnOL>> GetByConditionAsync(string condition)
@@ -32,27 +67,21 @@ namespace SqlJoiner.Repository.Column
                 var output = new List<ColumnOL>();
                 string query = $@"
 SELECT 
-    column_name ""ColumnName"", data_type ""DataType"", table_schema ""SchemaName"", table_name ""Name""
+    column_name ""ColumnName"", ordinal_position ""OrdinalPosition"", data_type ""DataType"", table_schema ""SchemaName"", table_name ""Name""
 FROM information_schema.columns
 WHERE is_updatable = 'YES' {condition}
 ";
 
-                dataConnectionInitializer.InitializeConnectionAsync();
                 if (Connection.DbConnection != null)
                 {
-                    using (Connection.DbConnection)
+                    var result = await Connection.DbConnection.QueryAsync<ColumnOL, SchemaOL, TableOL, ColumnOL>(query, (column, schema, table) =>
                     {
-                        dataConnectionInitializer.OpenConnectionAsync();
+                        column.Table = table;
+                        column.Table.Schema = schema;
 
-                        var result = await Connection.DbConnection.QueryAsync<ColumnOL, SchemaOL, TableOL, ColumnOL>(query, (column, schema, table) =>
-                        {
-                            column.Table = table;
-                            column.Table.Schema = schema;
-
-                            return column;
-                        }, splitOn: "SchemaName,Name");
-                        output = result.ToList();
-                    }
+                        return column;
+                    }, splitOn: "SchemaName,Name");
+                    output = result.ToList();
                 }
 
                 return output;

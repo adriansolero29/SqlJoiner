@@ -8,12 +8,6 @@ namespace SqlJoiner.Repository.Schema
 {
     public class SchemaRepository : ISchemaRepository
     {
-        private readonly IDataConnectionInitializer dataConnectionInitializer;
-        public SchemaRepository(IDataConnectionInitializer dataConnectionInitializer)
-        {
-            this.dataConnectionInitializer = dataConnectionInitializer;
-        }
-
         public async Task<IEnumerable<SchemaOL>> GetAllAsync()
         {
             try
@@ -22,18 +16,13 @@ namespace SqlJoiner.Repository.Schema
                 string query = $@"
 SELECT 
     catalog_name ""CatalogName"", schema_name ""SchemaName"", schema_owner ""SchemaOwner"" 
-FROM information_schema.schemata";
+FROM information_schema.schemata
+WHERE SCHEMA_NAME <> 'information_schema' AND NOT SCHEMA_NAME ILIKE 'pg_%' AND SCHEMA_NAME <> 'public'";
 
-                dataConnectionInitializer.InitializeConnectionAsync();
                 if (Connection.DbConnection != null)
                 {
-                    using (Connection.DbConnection)
-                    {
-                        Connection.DbConnection.Open();
-
-                        var result = await Connection.DbConnection.QueryAsync<SchemaOL>(query);
-                        output = result.ToList();
-                    }
+                    var result = await Connection.DbConnection.QueryAsync<SchemaOL>(query);
+                    output = result.ToList();
                 }
 
                 return output;
@@ -57,17 +46,10 @@ FROM information_schema.schemata
 
                 if (string.IsNullOrEmpty(condition)) throw new ArgumentNullException("condition is empty or null");
 
-                dataConnectionInitializer.InitializeConnectionAsync();
-
                 if (Connection.DbConnection != null)
                 {
-                    using (Connection.DbConnection)
-                    {
-                        Connection.DbConnection.Open();
-
-                        var result = await Connection.DbConnection.QueryAsync<SchemaOL>(query);
-                        output = result.ToList();
-                    }
+                    var result = await Connection.DbConnection.QueryAsync<SchemaOL>(query);
+                    output = result.ToList();
                 }
 
                 return output;

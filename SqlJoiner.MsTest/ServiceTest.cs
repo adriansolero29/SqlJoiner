@@ -26,9 +26,6 @@ namespace SqlJoiner.MsTest
 
         public ServiceTest()
         {
-            schemaService = new SchemaService(new SchemaRepository(new PostgresDataConnectionInitializer()));
-            tableService = new TableService(new TableRepository(new PostgresDataConnectionInitializer()));
-            columnService = new ColumnService(new ColumnRepository(new PostgresDataConnectionInitializer()));
         }
 
         [TestMethod]
