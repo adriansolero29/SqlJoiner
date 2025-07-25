@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MVP\SqlJoiner.Models\SqlJoiner.Models.csproj" />
+  </ItemGroup>
+
 </Project>

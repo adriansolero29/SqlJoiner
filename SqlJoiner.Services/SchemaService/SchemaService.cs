@@ -1,4 +1,5 @@
-﻿using SqlJoiner.Interfaces.DataAccess;
+﻿using SqlJoiner.Helpers;
+using SqlJoiner.Interfaces.DataAccess;
 using SqlJoiner.Interfaces.Repository;
 using SqlJoiner.Interfaces.Service;
 using SqlJoiner.Models;
@@ -20,6 +21,7 @@ namespace SqlJoiner.Services.SchemaService
         {
             dataConnectionInitializer.InitializeConnectionAsync();
             dataConnectionInitializer.OpenConnectionAsync();
+
             var result = await schemaRepository.GetAllAsync();
 
             dataConnectionInitializer.CloseConnection();
@@ -30,6 +32,7 @@ namespace SqlJoiner.Services.SchemaService
         {
             dataConnectionInitializer.InitializeConnectionAsync();
             dataConnectionInitializer.OpenConnectionAsync();
+
             var result = await schemaRepository.GetByConditionAsync($@"WHERE schema_name ILIKE '%{schemaName}%'");
 
             dataConnectionInitializer.CloseConnection();

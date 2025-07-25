@@ -9,14 +9,17 @@ namespace SqlJoiner.Interfaces.View
         List<TableOL>? TableList { get; set; }
         List<ColumnOL>? ColumnList { get; set; }
         List<ColumnOL>? ForeignKeyColumnsList { get; set; }
-        SchemaOL? SelectedSchema { get; set; }
-        TableOL? SelectedTable { get; set; }
-        ColumnOL? SelectedColumn { get; set; }
+        SchemaOL? CurrentSelectedSchema { get; set; }
+        TableOL? CurrentSelectedTable { get; set; }
+        CustomRecurseColumnOL CurrentSelectedColumn { get; set; }
 
         event EventHandler Init;
-        event EventHandler SelectedSchemaValueChanged;
-        event EventHandler SelectedTableValueChanged;
-        event EventHandler SelectedColumnValueChanged;
+        event EventHandler SelectSchema;
+        event EventHandler SelectTable;
+        event EventHandler SelectColumn;
         event EventHandler GenerateQuery;
+        event EventHandler LoadTableBySelectedSchema;
+        event EventHandler LoadColumnFromSelectedTable;
+        event EventHandler LoadForeignKeyColumnsBySelectedForeignKey;
     }
 }

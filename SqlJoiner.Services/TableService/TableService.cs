@@ -1,4 +1,5 @@
-﻿using SqlJoiner.Interfaces.DataAccess;
+﻿using SqlJoiner.Helpers;
+using SqlJoiner.Interfaces.DataAccess;
 using SqlJoiner.Interfaces.Repository;
 using SqlJoiner.Interfaces.Service;
 using SqlJoiner.Models;
@@ -23,6 +24,7 @@ namespace SqlJoiner.Services.TableService
         public async Task<IEnumerable<TableOL>> CheckColumnIfTable(ColumnOL col)
         {
             var result = await tableRepository.CheckIfForeignKey(col);
+
             return result;
         }
 

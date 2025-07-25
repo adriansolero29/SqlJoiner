@@ -8,5 +8,6 @@ namespace SqlJoiner.Models.Base
 {
     public interface IModel
     {
+        public string? TempId { get; set; }
     }
 }

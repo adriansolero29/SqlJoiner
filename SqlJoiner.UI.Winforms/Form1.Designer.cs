@@ -45,7 +45,8 @@
             treeData.ShowNodeToolTips = true;
             treeData.Size = new Size(337, 473);
             treeData.TabIndex = 6;
-            treeData.NodeMouseClick += treeData_NodeMouseClick;
+            treeData.AfterCheck += treeData_AfterCheck;
+            treeData.AfterExpand += treeData_AfterExpand;
             // 
             // txtSql
             // 

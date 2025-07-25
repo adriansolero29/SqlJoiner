@@ -27,19 +27,23 @@ namespace SqlJoiner.UI.Winforms
         public List<ColumnOL>? ColumnList { get; set; } = new List<ColumnOL>();
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<ColumnOL>? ForeignKeyColumnsList { get; set; } = new List<ColumnOL>();
-
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SchemaOL? SelectedSchema { get; set; } = new SchemaOL();
+        public SchemaOL? CurrentSelectedSchema { get; set; } = new SchemaOL();
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public TableOL? SelectedTable { get; set; }
+        public TableOL? CurrentSelectedTable { get; set; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ColumnOL? SelectedColumn { get; set; }
+        public CustomRecurseColumnOL CurrentSelectedColumn { get; set; } = new CustomRecurseColumnOL();
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ColumnOL? SelectedColumn2 { get; set; } = new ColumnOL();
 
         public event EventHandler? Init;
-        public event EventHandler? SelectedSchemaValueChanged;
-        public event EventHandler? SelectedTableValueChanged;
-        public event EventHandler? SelectedColumnValueChanged;
+        public event EventHandler? SelectSchema;
+        public event EventHandler? SelectTable;
+        public event EventHandler? SelectColumn;
         public event EventHandler? GenerateQuery;
+        public event EventHandler? LoadTableBySelectedSchema;
+        public event EventHandler? LoadColumnFromSelectedTable;
+        public event EventHandler? LoadForeignKeyColumnsBySelectedForeignKey;
 
         private async void Form1_Load(object sender, EventArgs e)
         {
@@ -71,20 +75,25 @@ namespace SqlJoiner.UI.Winforms
             });
         }
 
-        private async void treeData_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void btnGenerate_Click(object sender, EventArgs e)
+        {
+            GenerateQuery?.Invoke(sender, e);
+        }
+
+        private async void treeData_AfterExpand(object sender, TreeViewEventArgs e)
         {
             var selectedNode = e.Node;
             if (selectedNode != null)
             {
-                selectedNode.Checked = true;
                 var selectedNodeType = selectedNode?.Tag?.GetType();
-
                 if (selectedNodeType == typeof(SchemaOL))
                 {
-                    SelectedSchema = selectedNode?.Tag as SchemaOL;
+                    if (selectedNode != null) selectedNode.Checked = true;
+
+                    CurrentSelectedSchema = selectedNode?.Tag as SchemaOL;
                     await Task.Run(() =>
                     {
-                        SelectedSchemaValueChanged?.Invoke(sender, e);
+                        LoadTableBySelectedSchema?.Invoke(sender, e);
                     });
 
                     if (TableList == null) return;
@@ -103,11 +112,12 @@ namespace SqlJoiner.UI.Winforms
 
                 if (selectedNodeType == typeof(TableOL))
                 {
-                    SelectedTable = selectedNode?.Tag as TableOL;
+                    if (selectedNode != null) selectedNode.Checked = true;
+                    CurrentSelectedTable = selectedNode?.Tag as TableOL;
 
                     await Task.Run(() =>
                     {
-                        SelectedTableValueChanged?.Invoke(sender, e);
+                        LoadColumnFromSelectedTable?.Invoke(sender, e);
                     });
 
                     if (ColumnList == null) return;
@@ -127,11 +137,11 @@ namespace SqlJoiner.UI.Winforms
 
                 if (selectedNodeType == typeof(ColumnOL))
                 {
-                    SelectedColumn = selectedNode?.Tag as ColumnOL;
+                    CurrentSelectedColumn.ColumnInfo = selectedNode?.Tag as ColumnOL;
 
                     await Task.Run(() =>
                     {
-                        SelectedColumnValueChanged?.Invoke(sender, e);
+                        LoadForeignKeyColumnsBySelectedForeignKey?.Invoke(sender, e);
                     });
 
                     if (ForeignKeyColumnsList == null) return;
@@ -151,16 +161,39 @@ namespace SqlJoiner.UI.Winforms
             }
         }
 
-        private void treeData_AfterCollapse(object sender, TreeViewEventArgs e)
+        private async void treeData_AfterCheck(object sender, TreeViewEventArgs e)
         {
             var selectedNode = e.Node;
             if (selectedNode != null)
-                selectedNode.Checked = false;
-        }
+            {
+                var selectedNodeType = selectedNode?.Tag?.GetType();
+                if (selectedNodeType == typeof(SchemaOL))
+                {
+                    CurrentSelectedSchema = selectedNode?.Tag as SchemaOL;
+                    await Task.Run(() =>
+                    {
+                        SelectSchema?.Invoke(sender, e);
+                    });
+                }
 
-        private void btnGenerate_Click(object sender, EventArgs e)
-        {
-            GenerateQuery?.Invoke(sender, e);
+                if (selectedNodeType == typeof(TableOL))
+                {
+                    CurrentSelectedTable = selectedNode?.Tag as TableOL;
+                    await Task.Run(() =>
+                    {
+                        SelectTable?.Invoke(sender, e);
+                    });
+                }
+
+                if (selectedNodeType == typeof(ColumnOL))
+                {
+                    CurrentSelectedColumn.ColumnInfo = selectedNode?.Tag as ColumnOL;
+                    await Task.Run(() =>
+                    {
+                        SelectColumn?.Invoke(sender, e);
+                    });
+                }
+            }
         }
     }
 }

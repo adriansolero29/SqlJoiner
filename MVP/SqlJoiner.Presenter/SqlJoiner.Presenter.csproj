@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Interfaces\SqlJoiner.Interfaces\SqlJoiner.Interfaces.csproj" />
+    <ProjectReference Include="..\..\SqlJoiner.Helpers\SqlJoiner.Helpers.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,40 +5,13 @@ namespace SqlJoiner.Models
 	[Serializable]
     public class ColumnOL : IModel
     {
-		private TableOL? _table;
-		public TableOL? Table
-		{
-			get { return _table; }
-			set { _table = value; }
-		}
-
-		private string? _columnName;
-		public string? ColumnName
-		{
-			get { return _columnName; }
-			set { _columnName = value; }
-		}
-
-		private int _ordinalPosition;
-		public int OrdinalPosition
-		{
-			get { return _ordinalPosition; }
-			set { _ordinalPosition = value; }
-		}
-
-		private string? _dataType;
-		public string? DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
-
-		private bool _isForeignKey;
-		public bool IsForeignKey
-		{
-			get { return _isForeignKey; }
-			set { _isForeignKey = value; }
-		}
-
-	}
+        public string? HeadTempId { get; set; }
+        public string? TempId { get; set; }
+        public TableOL? Table { get; set; }
+        public string? ColumnName { get; set; }
+        public int OrdinalPosition { get; set; }
+        public string? DataType { get; set; }
+        public bool IsForeignKey { get; set; }
+        public string? FieldFromReferencedTable { get; set; }
+    }
 }

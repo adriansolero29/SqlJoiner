@@ -28,7 +28,7 @@ namespace SqlJoiner.Repository.Column
                 var output = new List<ColumnOL>();
                 string query = $@"
 SELECT 
-	kcu.""column_name"" ""ColumnName"", ccu.""table_name"" ""Name"", ccu.""table_schema"" ""SchemaName""
+	kcu.""column_name"" ""ColumnName"", ccu.""column_name"" as ""FieldFromReferencedTable"", ccu.""table_name"" ""Name"", ccu.""table_schema"" ""SchemaName""
 FROM information_schema.table_constraints tc
 left JOIN information_schema.key_column_usage kcu 
 	ON tc.""constraint_name"" = kcu.""constraint_name""
