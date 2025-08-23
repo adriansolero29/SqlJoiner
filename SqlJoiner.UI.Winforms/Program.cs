@@ -1,12 +1,15 @@
 using Autofac;
+using ScintillaNET;
 using SqlJoiner.DataAccess;
 using SqlJoiner.Interfaces.DataAccess;
 using SqlJoiner.Interfaces.Repository;
 using SqlJoiner.Interfaces.Service;
 using SqlJoiner.Repository.Column;
+using SqlJoiner.Repository.Query;
 using SqlJoiner.Repository.Schema;
 using SqlJoiner.Repository.Table;
 using SqlJoiner.Services.ColumnService;
+using SqlJoiner.Services.QueryService;
 using SqlJoiner.Services.SchemaService;
 using SqlJoiner.Services.TableService;
 
@@ -34,6 +37,8 @@ namespace SqlJoiner.UI.Winforms
             builder.RegisterType<TableService>().As<ITableService>();
             builder.RegisterType<ColumnRepository>().As<IColumnRepository>();
             builder.RegisterType<ColumnService>().As<IColumnService>();
+            builder.RegisterType<QueryRepository>().As<IQueryRepository>();
+            builder.RegisterType<QueryService>().As<IQueryService>();
 
             builder.RegisterType<Form1>().AsSelf();
 
