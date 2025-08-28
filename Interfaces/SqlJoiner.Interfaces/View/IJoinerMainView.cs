@@ -12,14 +12,22 @@ namespace SqlJoiner.Interfaces.View
         SchemaOL? CurrentSelectedSchema { get; set; }
         TableOL? CurrentSelectedTable { get; set; }
         CustomRecurseColumnOL CurrentSelectedColumn { get; set; }
+        string GeneratedQuery { get; set; }
+        IEnumerable<object> GeneratedOutputFromQuery { get; set; }
+        string JsonOutputFromQuery { get; set; }
 
         event EventHandler Init;
         event EventHandler SelectSchema;
         event EventHandler SelectTable;
         event EventHandler SelectColumn;
+        event EventHandler UnSelectSchema;
+        event EventHandler UnSelectTable;
+        event EventHandler UnSelectColumn;
         event EventHandler GenerateQuery;
         event EventHandler LoadTableBySelectedSchema;
         event EventHandler LoadColumnFromSelectedTable;
         event EventHandler LoadForeignKeyColumnsBySelectedForeignKey;
+        event EventHandler Reset;
+        event EventHandler RunQuery;
     }
 }

@@ -7,16 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="App.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="App.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.1" />
@@ -24,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Interfaces\SqlJoiner.Interfaces\SqlJoiner.Interfaces.csproj" />
+    <ProjectReference Include="..\DatabaseSetting\DatabaseSetting.csproj" />
   </ItemGroup>
 
 </Project>
