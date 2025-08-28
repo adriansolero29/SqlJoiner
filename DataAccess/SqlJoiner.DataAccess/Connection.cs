@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using DatabaseSetting.Model;
+using Npgsql;
+using System.Configuration;
 using System.Data;
 
 namespace SqlJoiner.DataAccess
@@ -17,8 +19,14 @@ namespace SqlJoiner.DataAccess
             get
             {
                 // set a custom path for your app.config
-                AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", "App.Config");
-                return ConfigurationManager.ConnectionStrings["postgres"]?.ConnectionString;
+                NpgsqlConnectionStringBuilder cnBuilder = new NpgsqlConnectionStringBuilder();
+                cnBuilder["Server"] = DataCommunication.ServerName;
+                cnBuilder["Port"] = DataCommunication.PortNumber;
+                cnBuilder["Database"] = DataCommunication.DatabaseName;
+                cnBuilder["UserId"] = DataCommunication.UserId;
+                cnBuilder["Password"] = DataCommunication.Password;
+
+                return cnBuilder.ToString();
             }
         }
     }

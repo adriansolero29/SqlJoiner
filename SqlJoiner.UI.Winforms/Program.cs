@@ -1,4 +1,6 @@
 using Autofac;
+using DatabaseSetting;
+using DatabaseSetting.Interface;
 using ScintillaNET;
 using SqlJoiner.DataAccess;
 using SqlJoiner.Interfaces.DataAccess;
@@ -39,10 +41,15 @@ namespace SqlJoiner.UI.Winforms
             builder.RegisterType<ColumnService>().As<IColumnService>();
             builder.RegisterType<QueryRepository>().As<IQueryRepository>();
             builder.RegisterType<QueryService>().As<IQueryService>();
+            builder.RegisterType<XMLDatabaseSetting>().As<IXMLDatabaseSetting>();
+            builder.RegisterType<XMLDatabaseSetting>().As<IXMLService>();
 
             builder.RegisterType<Form1>().AsSelf();
 
             Container = builder.Build();
+
+            var a = Container.Resolve<IXMLService>();
+            a.GetValues();
 
             using (var scope = Container.BeginLifetimeScope())
             {
